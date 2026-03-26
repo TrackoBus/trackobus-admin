@@ -1,3 +1,4 @@
+import RouteManagement from './pages/RouteManagement';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login'; 
@@ -6,7 +7,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
+        <Route path="/routes" element={<RouteManagement />} />
         <Route path="/" element={<Login />} />
       </Routes>
     </BrowserRouter>
