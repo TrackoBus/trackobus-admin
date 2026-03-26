@@ -1,36 +1,32 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Topbar from './components/Topbar';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AdminLayout from './components/AdminLayout';
 import Login from './pages/Login';
-import Settings from './pages/Settings';
+import Setting from './pages/Setting'; 
 import RouteManagement from './pages/RouteManagement';
+import Home from './pages/Home';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Login is outside the layout (no sidebar) */}
+        {/* 1. Login is the starting page */}
         <Route path="/" element={<Login />} />
         
-        {/* All other pages stay inside the layout */}
-        <Route
-          path="/*"
-          element={
-            <div className="flex min-h-screen bg-[#f8fafc]">
-              <Sidebar />
-              <div className="flex-1 flex flex-col h-screen overflow-hidden">
-                <Topbar />
-                <main className="flex-1 overflow-y-auto">
-                  <Routes>
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/route-management" element={<RouteManagement />} />
-                  </Routes>
-                </main>
-              </div>
-            </div>
-          }
-        />
+        {/* 2. Admin Layout Wrapper */}
+        <Route element={<AdminLayout />}>
+          
+          {/* 3. The Actual Pages */}
+          <Route path="/dashboard" element={<Home />} />
+          <Route path="/settings" element={<Setting />} />
+          
+          {/* FIX: We replace the test message with your actual file component */}
+          <Route path="/route-management" element={<RouteManagement />} />
+          
+          {/* 4. Redirects for safety */}
+          <Route path="/Home" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
