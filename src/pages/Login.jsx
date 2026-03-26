@@ -8,7 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Week 1: Dev Bypass Logic
+  // Dev Bypass Logic
   const handleDevBypass = () => {
     localStorage.setItem('isAuthenticated', 'true');
     navigate('/dashboard');
@@ -22,7 +22,7 @@ const Login = () => {
     
       
      
-      <div className="w-full max-w-[400px] bg-white rounded-3xl overflow-hidden shadow-2xl z-10">
+      <div className="w-full max-w-[400px] bg-white rounded-3xl overflow-hidden shadow-2xl z-10 overflow-hidden border border-white/40">
         {/* Blue Header Section */}
         <div className="bg-[#1e4ed8] p-8 text-center text-white">
           <div className="flex justify-center items-center gap-2 mb-2">
