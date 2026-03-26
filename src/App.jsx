@@ -1,6 +1,15 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AdminLayout from './components/AdminLayout'
 
+function PlaceholderPage({ title, description }) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
+      <p className="mt-2 text-slate-600">{description}</p>
+    </section>
+  )
+}
+
 function DashboardPage() {
   const statCards = [
     {
@@ -110,12 +119,37 @@ function DashboardPage() {
 
 function ManageRoutesPage() {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-2xl font-bold text-slate-900">Manage Routes</h3>
-      <p className="mt-2 text-slate-600">
-        Create, edit, and organize transport routes from this panel.
-      </p>
-    </section>
+    <PlaceholderPage
+      title="Routes"
+      description="Create, edit, and organize transport routes from this panel."
+    />
+  )
+}
+
+function UserRewardsPage() {
+  return (
+    <PlaceholderPage
+      title="User Rewards"
+      description="Reward campaigns, point redemptions, and reward analytics will appear here."
+    />
+  )
+}
+
+function SystemLogsPage() {
+  return (
+    <PlaceholderPage
+      title="System Logs"
+      description="Audit trails, operational events, and diagnostics will be available on this page."
+    />
+  )
+}
+
+function SettingsPage() {
+  return (
+    <PlaceholderPage
+      title="Settings"
+      description="Global application settings and admin preferences can be managed here."
+    />
   )
 }
 
@@ -125,7 +159,10 @@ function App() {
       <Routes>
         <Route element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
-          <Route path="manage-routes" element={<ManageRoutesPage />} />
+          <Route path="routes" element={<ManageRoutesPage />} />
+          <Route path="user-rewards" element={<UserRewardsPage />} />
+          <Route path="system-logs" element={<SystemLogsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
