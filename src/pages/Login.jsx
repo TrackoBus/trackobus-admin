@@ -73,7 +73,7 @@ const Login = () => {
             {/* Sign In Button */}
             <button 
               className="w-full bg-[#1e4ed8] hover:bg-blue-700 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg shadow-blue-200 mt-12"
-              onClick={() => navigate('/routes')}
+              onClick={handleDevBypass}
             >
               Sign In <ArrowRight size={18} />
             </button>
