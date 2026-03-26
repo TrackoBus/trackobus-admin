@@ -10,6 +10,7 @@ const RouteManagement = () => {
     { id: '102', name: 'Pettah - Battaramulla', fromTo: 'Pettah → Battaramulla', active: 0, status: 'Maintenance' },
     { id: '400', name: 'Kandy Road - Rajagiriya', fromTo: 'Kandy Rd → Rajagiriya', active: 6, status: 'Active' },
     { id: '240', name: 'Maradana - Panadura', fromTo: 'Maradana → Panadura', active: 0, status: 'Inactive' },
+    { id: '310', name: 'Fort - Galle Face - Wellawatte', fromTo: 'wellawatte', active: 3, status: 'Active' },
   ];
 
   return (
