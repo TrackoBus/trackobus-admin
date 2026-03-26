@@ -1,120 +1,134 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import AdminLayout from './components/AdminLayout'
 
-function App() {
-  const [count, setCount] = useState(0)
+function DashboardPage() {
+  const statCards = [
+    {
+      title: 'Active Tracked Buses',
+      value: '47',
+      change: '+3 vs last hour',
+      changeColor: 'text-emerald-600',
+      accent: 'LIVE',
+    },
+    {
+      title: 'Community Sharers',
+      value: '128',
+      change: '+12 vs last hour',
+      changeColor: 'text-emerald-600',
+    },
+    {
+      title: 'Primary—Backup Promotions',
+      value: '14',
+      change: '-2 vs last hour',
+      changeColor: 'text-rose-500',
+    },
+    {
+      title: 'Total Points Rewarded',
+      value: '9,832',
+      change: '+541 vs last hour',
+      changeColor: 'text-emerald-600',
+    },
+  ]
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <section className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        {statCards.map((card) => (
+          <article
+            key={card.title}
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-base font-semibold text-slate-700">{card.title}</h3>
+                {card.accent ? (
+                  <p className="mt-0.5 text-xs font-semibold text-emerald-600">
+                    {card.accent}
+                  </p>
+                ) : null}
+              </div>
+              <div className="h-9 w-9 rounded-xl bg-slate-100" />
+            </div>
 
-      <div className="ticks"></div>
+            <p className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
+              {card.value}
+            </p>
+            <p className={`mt-5 text-sm font-medium ${card.changeColor}`}>{card.change}</p>
+          </article>
+        ))}
+      </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+          <h3 className="text-3xl font-semibold text-slate-900">
+            Live System Map — Colombo, Sri Lanka
+          </h3>
+          <div className="flex items-center gap-2 text-xs font-semibold">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+              6 buses visible
+            </span>
+            <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-600">
+              4 active routes
+            </span>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+
+        <div className="relative h-[360px] bg-slate-100">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:48px_48px]" />
+          <div className="absolute left-[18%] top-0 h-full w-[11%] bg-blue-100/70" />
+
+          <div className="absolute left-[26%] top-[18%] h-1 w-[25%] rounded-full bg-emerald-500" />
+          <div className="absolute left-[50%] top-[18%] h-[28%] w-1 rounded-full bg-emerald-500" />
+
+          <div className="absolute left-[28%] top-[42%] h-1 w-[28%] rounded-full bg-blue-500" />
+          <div className="absolute left-[56%] top-[42%] h-1 w-[26%] rounded-full bg-blue-500" />
+
+          <div className="absolute left-[39%] top-[22%] h-[45%] w-1 rotate-[38deg] rounded-full bg-violet-500" />
+
+          <div className="absolute left-[30%] top-[68%] h-1 w-[14%] rotate-[32deg] rounded-full bg-amber-500" />
+
+          <div className="absolute left-[44%] top-[46%] flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+            139
+          </div>
+          <div className="absolute left-[56%] top-[55%] flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white">
+            120
+          </div>
+          <div className="absolute left-[63%] top-[38%] flex h-7 w-7 items-center justify-center rounded-full bg-violet-500 text-[10px] font-bold text-white">
+            177
+          </div>
+          <div className="absolute left-[32%] top-[72%] flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
+            184
+          </div>
+          <div className="absolute left-[74%] top-[64%] flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white">
+            400
+          </div>
         </div>
       </section>
+    </section>
+  )
+}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+function ManageRoutesPage() {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h3 className="text-2xl font-bold text-slate-900">Manage Routes</h3>
+      <p className="mt-2 text-slate-600">
+        Create, edit, and organize transport routes from this panel.
+      </p>
+    </section>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="manage-routes" element={<ManageRoutesPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
