@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AdminLayout from '../components/AdminLayout'
+import UserRewards from './UserRewards'
 
 function PlaceholderPage({ title, description }) {
   return (
@@ -126,15 +127,6 @@ function ManageRoutesPage() {
   )
 }
 
-function UserRewardsPage() {
-  return (
-    <PlaceholderPage
-      title="User Rewards"
-      description="Reward campaigns, point redemptions, and reward analytics will appear here."
-    />
-  )
-}
-
 function SystemLogsPage() {
   return (
     <PlaceholderPage
@@ -160,7 +152,7 @@ function Home() {
         <Route element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="routes" element={<ManageRoutesPage />} />
-          <Route path="user-rewards" element={<UserRewardsPage />} />
+          <Route path="user-rewards" element={<UserRewards />} />
           <Route path="system-logs" element={<SystemLogsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>

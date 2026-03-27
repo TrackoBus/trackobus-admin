@@ -88,7 +88,7 @@ const mainMenuItems = [
 const pageTitleByPath = {
   '/': 'Dashboard Overview',
   '/routes': 'Routes',
-  '/user-rewards': 'User Rewards',
+  '/user-rewards': 'User Rewards & Gamification ',
   '/system-logs': 'System Logs',
   '/settings': 'Settings',
 }
