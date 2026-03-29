@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import RewardCatalog from '../components/rewards/RewardCatalog'
+import RedemptionTable from '../components/rewards/RedemptionTable'
+
 const kpiCards = [
 	{
 		label: 'Pending Requests',
@@ -25,7 +29,7 @@ const kpiCards = [
 	},
 ]
 
-const rewardItems = [
+const initialRewardItems = [
 	{
 		id: 1,
 		icon: 'DR',
@@ -127,23 +131,60 @@ const redemptionRequests = [
 	},
 ]
 
-const categoryClassByName = {
-	Telecom: 'bg-blue-100 text-blue-700',
-	Grocery: 'bg-emerald-100 text-emerald-700',
-	Retail: 'bg-violet-100 text-violet-700',
+const initialRewardForm = {
+	title: '',
+	provider: '',
+	category: 'Telecom',
+	points: '',
+	stockCount: '',
+	icon: '',
 }
 
-const statusClassByName = {
-	Pending: 'bg-amber-100 text-amber-700',
-	Fulfilled: 'bg-emerald-100 text-emerald-700',
-	Rejected: 'bg-rose-100 text-rose-700',
-}
-
-function formatPoints(points) {
-	return points.toLocaleString('en-US')
-}
+const categoryOptions = ['Telecom', 'Grocery', 'Retail']
 
 function UserRewards() {
+	const [rewards, setRewards] = useState(initialRewardItems)
+	const [isAddRewardModalOpen, setIsAddRewardModalOpen] = useState(false)
+	const [rewardForm, setRewardForm] = useState(initialRewardForm)
+
+	const handleAddReward = () => {
+		setIsAddRewardModalOpen(true)
+	}
+
+	const handleCloseModal = () => {
+		setIsAddRewardModalOpen(false)
+		setRewardForm(initialRewardForm)
+	}
+
+	const handleRewardFieldChange = (event) => {
+		const { name, value } = event.target
+		setRewardForm((currentForm) => ({
+			...currentForm,
+			[name]: value,
+		}))
+	}
+
+	const handleSubmitNewReward = (event) => {
+		event.preventDefault()
+
+		const pointsValue = Number(rewardForm.points)
+		const stockValue = Number(rewardForm.stockCount)
+		const computedStock = stockValue <= 0 ? 'Out of stock' : `${stockValue} left`
+
+		const newReward = {
+			id: Date.now(),
+			title: rewardForm.title.trim(),
+			provider: rewardForm.provider.trim(),
+			category: rewardForm.category,
+			points: Number.isNaN(pointsValue) ? 0 : pointsValue,
+			stock: computedStock,
+			icon: rewardForm.icon.trim() || rewardForm.title.trim().slice(0, 2).toUpperCase(),
+		}
+
+		setRewards((currentRewards) => [newReward, ...currentRewards])
+		handleCloseModal()
+	}
+
 	return (
 		<section className="space-y-6">
 			<div>
@@ -167,119 +208,128 @@ function UserRewards() {
 				))}
 			</section>
 
-			<section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-				<div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-					<div>
-						<h2 className="text-2xl font-bold text-slate-900">Reward Catalog</h2>
-						<p className="mt-1 text-sm text-slate-500">6 items</p>
-					</div>
+			<RewardCatalog rewards={rewards} onAddReward={handleAddReward} />
 
-					<button
-						type="button"
-						className="inline-flex items-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+			<RedemptionTable requests={redemptionRequests} />
+
+			{isAddRewardModalOpen ? (
+				<div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 p-4">
+					<form
+						onSubmit={handleSubmitNewReward}
+						className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6"
 					>
-						Add Reward
-					</button>
-				</div>
+						<div className="mb-5 flex items-start justify-between gap-3">
+							<div>
+								<h3 className="text-xl font-bold text-slate-900">Add New Reward</h3>
+								<p className="mt-1 text-sm text-slate-600">
+									Create a reward item for the catalog.
+								</p>
+							</div>
 
-				<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-					{rewardItems.map((item) => {
-						const isOutOfStock = item.stock === 'Out of stock'
-
-						return (
-							<article
-								key={item.id}
-								className={`rounded-2xl border p-4 ${item.bgClassName}`}
+							<button
+								type="button"
+								onClick={handleCloseModal}
+								className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
 							>
-								<div className="flex items-start justify-between gap-3">
-									<div className="flex min-w-0 items-start gap-3">
-										<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-bold text-slate-700 shadow-sm">
-											{item.icon}
-										</div>
+								Close
+							</button>
+						</div>
 
-										<div className="min-w-0">
-											<h3 className="truncate text-base font-semibold text-slate-900">
-												{item.title}
-											</h3>
-											<p className="mt-0.5 text-sm text-slate-600">{item.provider}</p>
-										</div>
-									</div>
+						<div className="grid gap-4 sm:grid-cols-2">
+							<label className="text-sm font-medium text-slate-700">
+								Title
+								<input
+									required
+									name="title"
+									value={rewardForm.title}
+									onChange={handleRewardFieldChange}
+									className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+								/>
+							</label>
 
-									<span
-										className={`rounded-full px-2.5 py-1 text-xs font-semibold ${categoryClassByName[item.category]}`}
-									>
-										{item.category}
-									</span>
-								</div>
+							<label className="text-sm font-medium text-slate-700">
+								Provider
+								<input
+									required
+									name="provider"
+									value={rewardForm.provider}
+									onChange={handleRewardFieldChange}
+									className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+								/>
+							</label>
 
-								<div className="mt-4 flex items-center justify-between gap-3 border-t border-white/60 pt-3 text-sm">
-									<p className="font-semibold text-slate-900">{formatPoints(item.points)} pts</p>
-									<p
-										className={`font-semibold ${
-											isOutOfStock ? 'text-rose-600' : 'text-emerald-600'
-										}`}
-									>
-										{item.stock}
-									</p>
-								</div>
-							</article>
-						)
-					})}
+							<label className="text-sm font-medium text-slate-700">
+								Category
+								<select
+									name="category"
+									value={rewardForm.category}
+									onChange={handleRewardFieldChange}
+									className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+								>
+									{categoryOptions.map((category) => (
+										<option key={category} value={category}>
+											{category}
+										</option>
+									))}
+								</select>
+							</label>
+
+							<label className="text-sm font-medium text-slate-700">
+								Points
+								<input
+									required
+									type="number"
+									min="0"
+									name="points"
+									value={rewardForm.points}
+									onChange={handleRewardFieldChange}
+									className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+								/>
+							</label>
+
+							<label className="text-sm font-medium text-slate-700">
+								Stock Count
+								<input
+									required
+									type="number"
+									min="0"
+									name="stockCount"
+									value={rewardForm.stockCount}
+									onChange={handleRewardFieldChange}
+									className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+								/>
+							</label>
+
+							<label className="text-sm font-medium text-slate-700">
+								Icon (2 letters)
+								<input
+									name="icon"
+									maxLength="2"
+									value={rewardForm.icon}
+									onChange={handleRewardFieldChange}
+									className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm uppercase outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+								/>
+							</label>
+						</div>
+
+						<div className="mt-6 flex items-center justify-end gap-2.5">
+							<button
+								type="button"
+								onClick={handleCloseModal}
+								className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+							>
+								Cancel
+							</button>
+							<button
+								type="submit"
+								className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+							>
+								Add Reward
+							</button>
+						</div>
+					</form>
 				</div>
-			</section>
-
-			<section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-				<div className="border-b border-slate-200 px-5 py-4 sm:px-6">
-					<h2 className="text-2xl font-bold text-slate-900">Redemption Requests</h2>
-				</div>
-
-				<div className="overflow-x-auto">
-					<table className="min-w-full text-left text-sm">
-						<thead className="bg-slate-50 text-xs uppercase tracking-[0.08em] text-slate-500">
-							<tr>
-								<th className="px-5 py-3 font-semibold sm:px-6">User</th>
-								<th className="px-5 py-3 font-semibold sm:px-6">Email</th>
-								<th className="px-5 py-3 font-semibold sm:px-6">Reward</th>
-								<th className="px-5 py-3 font-semibold sm:px-6">Points</th>
-								<th className="px-5 py-3 font-semibold sm:px-6">Date</th>
-								<th className="px-5 py-3 font-semibold sm:px-6">Status</th>
-							</tr>
-						</thead>
-
-						<tbody className="divide-y divide-slate-200 text-slate-700">
-							{redemptionRequests.map((request) => (
-								<tr key={request.id} className="hover:bg-slate-50">
-									<td className="px-5 py-3.5 font-semibold text-slate-900 sm:px-6">
-										{request.user}
-									</td>
-									<td className="px-5 py-3.5 text-slate-600 sm:px-6">{request.email}</td>
-									<td className="px-5 py-3.5 sm:px-6">{request.reward}</td>
-									<td className="px-5 py-3.5 font-semibold text-slate-900 sm:px-6">
-										{formatPoints(request.points)}
-									</td>
-									<td className="px-5 py-3.5 text-slate-600 sm:px-6">{request.date}</td>
-									<td className="px-5 py-3.5 sm:px-6">
-										<span
-											className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusClassByName[request.status]}`}
-										>
-											{request.status}
-										</span>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-
-				<div className="border-t border-slate-200 px-5 py-3 sm:px-6">
-					<button
-						type="button"
-						className="inline-flex items-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
-					>
-						Export CSV
-					</button>
-				</div>
-			</section>
+			) : null}
 		</section>
 	)
 }
