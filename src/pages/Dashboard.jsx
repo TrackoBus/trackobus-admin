@@ -1,17 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import AdminLayout from '../components/AdminLayout'
-import UserRewards from './UserRewards'
-
-function PlaceholderPage({ title, description }) {
-  return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
-      <p className="mt-2 text-slate-600">{description}</p>
-    </section>
-  )
-}
-
-function DashboardPage() {
+function Dashboard() {
   const statCards = [
     {
       title: 'Active Tracked Buses',
@@ -118,47 +105,4 @@ function DashboardPage() {
   )
 }
 
-function ManageRoutesPage() {
-  return (
-    <PlaceholderPage
-      title="Routes"
-      description="Create, edit, and organize transport routes from this panel."
-    />
-  )
-}
-
-function SystemLogsPage() {
-  return (
-    <PlaceholderPage
-      title="System Logs"
-      description="Audit trails, operational events, and diagnostics will be available on this page."
-    />
-  )
-}
-
-function SettingsPage() {
-  return (
-    <PlaceholderPage
-      title="Settings"
-      description="Global application settings and admin preferences can be managed here."
-    />
-  )
-}
-
-function Home() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<AdminLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="routes" element={<ManageRoutesPage />} />
-          <Route path="user-rewards" element={<UserRewards />} />
-          <Route path="system-logs" element={<SystemLogsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
-}
-
-export default Home
+export default Dashboard
