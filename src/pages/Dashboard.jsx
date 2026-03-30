@@ -1,3 +1,4 @@
+<<<<<<< HEAD:src/pages/Home.jsx
 import React from 'react';
 
 // --- Small helper for the placeholder pages ---
@@ -12,6 +13,9 @@ function PlaceholderPage({ title, description }) {
 
 // --- This is your actual Dashboard Content ---
 function Home() {
+=======
+function Dashboard() {
+>>>>>>> system-logs-ui:src/pages/Dashboard.jsx
   const statCards = [
     {
       title: 'Active Tracked Buses',
@@ -109,4 +113,8 @@ function Home() {
   )
 }
 
+<<<<<<< HEAD:src/pages/Home.jsx
 export default Home;
+=======
+export default Dashboard
+>>>>>>> system-logs-ui:src/pages/Dashboard.jsx
