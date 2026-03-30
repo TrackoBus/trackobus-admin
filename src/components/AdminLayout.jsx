@@ -19,18 +19,12 @@ const mainMenuItems = [
 ]
 
 const pageTitleByPath = {
-<<<<<<< HEAD
   '/dashboard': 'Dashboard Overview',
   '/route-management': 'Manage Bus Routes',
-  '/user-rewards': 'User Rewards',
-=======
-  '/': 'Dashboard Overview',
-  '/routes': 'Routes',
-  '/user-rewards': 'User Rewards & Gamification ',
->>>>>>> system-logs-ui
+  '/user-rewards': 'User Rewards & Gamification',
   '/system-logs': 'System Logs',
   '/settings': 'Settings',
-}
+};
 
 function AdminLayout() {
   const { pathname } = useLocation();

@@ -93,7 +93,6 @@ function SystemLogs() {
   return (
     <section className="space-y-6">
       <header className="space-y-1">
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">System Logs</h2>
         <p className="text-sm text-slate-600">
           Track audit trails, platform alerts, and operational events from Week 1 development.
         </p>

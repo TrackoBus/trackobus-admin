@@ -6,7 +6,7 @@ import AdminLayout from './components/AdminLayout';
 import Login from './pages/Login';
 
 // Admin Protected Pages 
-import Home from './pages/Home'; 
+import Home from './pages/Dashboard'; 
 import RouteManagement from './pages/RouteManagement'; 
 import Setting from './pages/Setting'; 
 import UserRewards from './pages/UserRewards';       

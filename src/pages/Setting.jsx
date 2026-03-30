@@ -33,13 +33,14 @@ const Settings = () => {
   const systemFont = 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
 
   return (
-    <div className="p-10 pb-32 bg-[#f8fafc] min-h-screen" style={{ fontFamily: systemFont }}>
+    <div className="pt-2 pr-10 pb-32 pl-0 bg-[#f8fafc] min-h-screen" style={{ fontFamily: systemFont }}>
       
       {/* Page Header */}
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Settings</h1>
-        <p className="text-slate-500 font-medium mt-1">Configure TrackoBus platform behaviour</p>
-      </div>
+      <div className="-mt-3 mb-10"> 
+  <p className="text-sm font-medium text-slate-500 leading-none">
+    Configure TrackoBus platform behaviour
+  </p>
+</div>
 
       <div className="max-w-5xl">
         

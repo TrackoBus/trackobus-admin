@@ -1,4 +1,3 @@
-<<<<<<< HEAD:src/pages/Home.jsx
 import React from 'react';
 
 // --- Small helper for the placeholder pages ---
@@ -8,14 +7,11 @@ function PlaceholderPage({ title, description }) {
       <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
       <p className="mt-2 text-slate-600">{description}</p>
     </section>
-  )
+  );
 }
 
 // --- This is your actual Dashboard Content ---
-function Home() {
-=======
 function Dashboard() {
->>>>>>> system-logs-ui:src/pages/Dashboard.jsx
   const statCards = [
     {
       title: 'Active Tracked Buses',
@@ -42,7 +38,7 @@ function Dashboard() {
       change: '+541 vs last hour',
       changeColor: 'text-emerald-600',
     },
-  ]
+  ];
 
   return (
     <section className="space-y-6">
@@ -89,12 +85,10 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* This is the visual map your friend drew with CSS */}
         <div className="relative h-[360px] bg-slate-100">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:48px_48px]" />
           <div className="absolute left-[18%] top-0 h-full w-[11%] bg-blue-100/70" />
 
-          {/* Lines and Bus markers */}
           <div className="absolute left-[26%] top-[18%] h-1 w-[25%] rounded-full bg-emerald-500" />
           <div className="absolute left-[50%] top-[18%] h-[28%] w-1 rounded-full bg-emerald-500" />
           <div className="absolute left-[28%] top-[42%] h-1 w-[28%] rounded-full bg-blue-500" />
@@ -110,11 +104,7 @@ function Dashboard() {
         </div>
       </section>
     </section>
-  )
+  );
 }
 
-<<<<<<< HEAD:src/pages/Home.jsx
-export default Home;
-=======
-export default Dashboard
->>>>>>> system-logs-ui:src/pages/Dashboard.jsx
+export default Dashboard;
