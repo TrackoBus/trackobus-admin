@@ -2,11 +2,15 @@ import mbg from '../assets/mbg.png';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Bus } from 'lucide-react'; // Added EyeOff
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // New state for visibility
+  const [error, setError] = useState(''); 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const systemFont = 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
@@ -14,6 +18,24 @@ const Login = () => {
   const handleDevBypass = () => {
     localStorage.setItem('isAuthenticated', 'true');
     navigate('/dashboard');
+  };
+
+  const handleFirebaseLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem('isAuthenticated', 'true');
+      console.log('Signed in successfully');
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      setError('Failed to sign in. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,6 +65,12 @@ const Login = () => {
             <h2 className="text-xl font-bold text-slate-800">Welcome back</h2>
             <p className="text-slate-400 text-sm font-medium">Sign in to access the admin dashboard</p>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-xs font-medium border border-red-100">
+              {error}
+            </div>
+          )}
 
           <div className="space-y-5">
             {/* Email Field */}
@@ -89,10 +117,13 @@ const Login = () => {
 
             {/* Sign In Button */}
             <button 
-              className="w-full bg-[#1e60ff] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg shadow-blue-100 mt-10"
-              onClick={handleDevBypass}
+              className="w-full bg-[#1e60ff] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg shadow-blue-100 mt-10 disabled:opacity-70 disabled:cursor-not-allowed"
+              onClick={handleFirebaseLogin}
+              disabled={loading || !email || !password}
             >
-              Sign in <ArrowRight size={18} />
+              {loading ? 'Signing in...' : (
+                <>Sign in <ArrowRight size={18} /></>
+              )}
             </button>
           </div>
 
