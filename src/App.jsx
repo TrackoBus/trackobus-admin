@@ -17,7 +17,7 @@ function App() {
         <Route element={<AdminLayout />}>
           
           {/* 3. The Actual Pages */}
-          <Route path="/dashboard" element={<Home />} />
+          <Route path="/dashboard" element={<Home />} /> 
           <Route path="/settings" element={<Setting />} />
           
           {/* FIX: We replace the test message with your actual file component */}
