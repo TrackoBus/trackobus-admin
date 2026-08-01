@@ -21,9 +21,9 @@ const RouteManagement = () => {
 
   const handleSaveNewRoute = (newRouteData) => {
     const newEntry = {
-      id: newRouteData.number, 
-      name: newRouteData.name,     
-      fromTo: newRouteData.name.replace("-", " → "), 
+      id: newRouteData.routeNumber, 
+      name: newRouteData.routeName,     
+      fromTo: `${newRouteData.origin} → ${newRouteData.destination}`, 
       active: 0, 
       status: newRouteData.status,
     };

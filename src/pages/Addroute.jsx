@@ -15,25 +15,50 @@ const createNumberedIcon = (number, color) => {
   });
 };
 
+const getCoordinates = (w) => {
+  if (typeof w !== 'string') return null;
+  const parts = w.split(',');
+  if (parts.length !== 2) return null;
+  const lat = Number(parts[0].trim());
+  const lng = Number(parts[1].trim());
+  if (isNaN(lat) || isNaN(lng)) return null;
+  return [lat, lng];
+};
+
 function MapClickHandler({ onMapClick }) {
   useMapEvents({ click(e) { onMapClick(e.latlng); } });
   return null;
 }
 
 const Addroute = ({ onSave, onClose }) => {
+  const [routeNumber, setRouteNumber] = useState('');
+  const [routeName, setRouteName] = useState('');
+  const [origin, setOrigin] = useState('');
+  const [destination, setDestination] = useState('');
+  const [status, setStatus] = useState('Active');
   const [waypoints, setWaypoints] = useState([]);
-  const [formData, setFormData] = useState({ number: '', name: '', status: 'Active' });
+  const [waypointInput, setWaypointInput] = useState('');
+
+  const handleAddWaypoint = () => {
+    if (!waypointInput.trim()) return;
+    setWaypoints((prev) => [...prev, waypointInput.trim()]);
+    setWaypointInput('');
+  };
+
+  const handleRemoveWaypoint = (indexToRemove) => {
+    setWaypoints((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
 
   const handleMapClick = (latlng) => {
-    setWaypoints((prev) => [...prev, { lat: latlng.lat.toFixed(4), lng: latlng.lng.toFixed(4) }]);
+    setWaypoints((prev) => [...prev, `${latlng.lat.toFixed(4)},${latlng.lng.toFixed(4)}`]);
   };
 
   const handleSave = () => {
-    if (!formData.number || !formData.name) {
-      alert("Please enter Route Number and Name first!");
+    if (!routeNumber || !routeName || !origin || !destination) {
+      alert("Please enter Route Number, Name, Origin, and Destination first!");
       return;
     }
-    onSave({ ...formData, waypoints });
+    onSave({ routeNumber, routeName, origin, destination, status, waypoints });
   };
 
   return (
@@ -61,7 +86,7 @@ const Addroute = ({ onSave, onClose }) => {
 
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel */}
-          <div className="w-[320px] p-8 border-r border-slate-50 flex flex-col">
+          <div className="w-[320px] p-8 border-r border-slate-50 flex flex-col overflow-y-auto">
             <div className="flex-1 space-y-6">
               <h3 className="font-bold text-slate-800 text-sm tracking-tight">Route Details</h3>
               
@@ -70,7 +95,8 @@ const Addroute = ({ onSave, onClose }) => {
                 <input 
                   type="text" placeholder="e.g. 138" 
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition-all"
-                  onChange={(e) => setFormData({...formData, number: e.target.value})}
+                  value={routeNumber}
+                  onChange={(e) => setRouteNumber(e.target.value)}
                 />
               </div>
 
@@ -79,15 +105,77 @@ const Addroute = ({ onSave, onClose }) => {
                 <input 
                   type="text" placeholder="e.g. Pettah - Homagama" 
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition-all"
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  value={routeName}
+                  onChange={(e) => setRouteName(e.target.value)}
                 />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Origin *</label>
+                <input 
+                  type="text" placeholder="e.g. Pettah" 
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition-all"
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Destination *</label>
+                <input 
+                  type="text" placeholder="e.g. Homagama" 
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition-all"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Add Waypoints</label>
+                <div className="flex gap-2 mb-3">
+                  <input 
+                    type="text" 
+                    placeholder="Waypoint name or lat,lng" 
+                    className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition-all text-sm"
+                    value={waypointInput}
+                    onChange={(e) => setWaypointInput(e.target.value)}
+                  />
+                  <button 
+                    type="button"
+                    onClick={handleAddWaypoint}
+                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all text-xs"
+                  >
+                    Add Waypoint
+                  </button>
+                </div>
+                
+                {/* List of current waypoints */}
+                {waypoints.length > 0 && (
+                  <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                    {waypoints.map((wp, index) => (
+                      <div key={index} className="flex justify-between items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-600">
+                        <span className="truncate pr-2 font-medium">
+                          {index + 1}. {wp}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveWaypoint(index)}
+                          className="text-slate-400 hover:text-red-500 transition-colors p-1"
+                        >
+                          <X size={14} strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Status</label>
                 <select 
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
                 >
                   <option>Active</option>
                   <option>Inactive</option>
@@ -120,16 +208,24 @@ const Addroute = ({ onSave, onClose }) => {
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <MapClickHandler onMapClick={handleMapClick} />
                 
-                {waypoints.length > 1 && (
-                  <Polyline positions={waypoints.map(w => [w.lat, w.lng])} color="#3b82f6" weight={3} />
+                {waypoints.filter(w => getCoordinates(w)).length > 1 && (
+                  <Polyline 
+                    positions={waypoints
+                      .map(w => getCoordinates(w))
+                      .filter(coord => coord !== null)} 
+                    color="#3b82f6" 
+                    weight={3} 
+                  />
                 )}
 
                 {waypoints.map((w, idx) => {
+                  const coord = getCoordinates(w);
+                  if (!coord) return null;
                   let color = "#3b82f6"; 
                   if (idx === 0) color = "#10b981"; 
                   if (idx === waypoints.length - 1 && idx !== 0) color = "#ef4444"; 
                   return (
-                    <Marker key={idx} position={[w.lat, w.lng]} icon={createNumberedIcon(idx + 1, color)} />
+                    <Marker key={idx} position={coord} icon={createNumberedIcon(idx + 1, color)} />
                   );
                 })}
               </MapContainer>
@@ -139,7 +235,13 @@ const Addroute = ({ onSave, onClose }) => {
               <p className="text-slate-500 mb-3 text-xs tracking-tight">Generated Coordinates (JSON) — {waypoints.length} waypoints</p>
               <pre className="text-emerald-400">
                 {waypoints.length > 0 
-                  ? JSON.stringify(waypoints.map((w, i) => ({ point: i + 1, lat: w.lat, lng: w.lng })), null, 2)
+                  ? JSON.stringify(waypoints.map((w, i) => {
+                      const coord = getCoordinates(w);
+                      if (coord) {
+                        return { point: i + 1, lat: coord[0], lng: coord[1] };
+                      }
+                      return { point: i + 1, name: w };
+                    }), null, 2)
                   : "// Click on the map above to generate coordinates..."}
               </pre>
             </div>
