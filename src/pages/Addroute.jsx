@@ -53,12 +53,52 @@ const Addroute = ({ onSave, onClose }) => {
     setWaypoints((prev) => [...prev, `${latlng.lat.toFixed(4)},${latlng.lng.toFixed(4)}`]);
   };
 
-  const handleSave = () => {
+  const submitNewRoute = async (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+    
     if (!routeNumber || !routeName || !origin || !destination) {
       alert("Please enter Route Number, Name, Origin, and Destination first!");
       return;
     }
-    onSave({ routeNumber, routeName, origin, destination, status, waypoints });
+
+    try {
+      const token = localStorage.getItem('token'); // or sessionStorage
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch('/api/admin/routes', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ routeNumber, routeName, origin, destination, waypoints })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to save route');
+      }
+
+      alert('Route saved!');
+      
+      // Call onSave to update parent component state and close modal
+      onSave({ routeNumber, routeName, origin, destination, status, waypoints });
+      
+      // Clear form states
+      setRouteNumber('');
+      setRouteName('');
+      setOrigin('');
+      setDestination('');
+      setStatus('Active');
+      setWaypoints([]);
+      setWaypointInput('');
+    } catch (error) {
+      alert(error.message || 'An error occurred while saving the route');
+    }
   };
 
   return (
@@ -252,7 +292,7 @@ const Addroute = ({ onSave, onClose }) => {
         <div className="px-8 py-5 border-t bg-white flex justify-end gap-3">
           <button onClick={onClose} className="px-6 py-2.5 rounded-xl border border-slate-200 font-bold text-slate-500 hover:bg-slate-50 transition-all">Cancel</button>
           <button 
-            onClick={handleSave}
+            onClick={submitNewRoute}
             className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-lg shadow-blue-100 transition-all flex items-center gap-2"
           >
             ✓ Save Route
