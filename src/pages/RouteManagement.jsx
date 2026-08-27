@@ -1,34 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Addroute from './Addroute'; 
-import { Search, Plus, Edit2, Trash2, Bus } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2 } from 'lucide-react';
+import { fetchRoutesApi, deleteRouteApi } from '../services/api';
+
+const defaultRoutes = [
+  { id: '100', name: 'Colombo - Panadura', fromTo: 'Colombo → Panadura', status: 'Active' },
+  { id: '138', name: 'Pettah - Maharagama', fromTo: 'Pettah → Maharagama', status: 'Active' },
+  { id: '177', name: 'Kollupitiya - Kaduwela', fromTo: 'Kollupitiya → Kaduwela', status: 'Active' },
+  { id: '120', name: 'Fort - Kaduwela', fromTo: 'Fort → Kaduwela', status: 'Active' },
+  { id: '154', name: 'Dehiwala - Maharagama', fromTo: 'Dehiwala → Maharagama', status: 'Active' },
+  { id: '102', name: 'Pettah - Battaramulla', fromTo: 'Pettah → Battaramulla', status: 'Maintenance' },
+  { id: '400', name: 'Kandy Road - Rajagiriya', fromTo: 'Kandy Rd → Rajagiriya', status: 'Active' },
+  { id: '240', name: 'Maradana - Panadura', fromTo: 'Maradana → Panadura', status: 'Inactive' },
+];
+
+// Helper to format From → To with human-readable location names parsed from routeName or locations
+const getLocationDisplay = (route) => {
+  if (route.originName && route.destinationName) {
+    return `${route.originName} → ${route.destinationName}`;
+  }
+  // If routeName has "Origin - Destination" (e.g. "Colombo - Panadura"), convert to "Colombo → Panadura"
+  const name = route.routeName || route.name || '';
+  if (name.includes(' - ')) {
+    const parts = name.split(' - ');
+    return `${parts[0].trim()} → ${parts.slice(1).join(' - ').trim()}`;
+  }
+  if (route.fromTo && !/^-?\d+\.\d+\s*,\s*-?\d+\.\d+/.test(route.fromTo)) {
+    return route.fromTo;
+  }
+  return name || 'Route';
+};
 
 const RouteManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [routeToDelete, setRouteToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState(""); 
+  const [routes, setRoutes] = useState(defaultRoutes);
 
-  const [routes, setRoutes] = useState([
-    { id: '138', name: 'Pettah - Homagama', fromTo: 'Pettah → Homagama', active: 4, status: 'Active' },
-    { id: '120', name: 'Fort - Kaduwela', fromTo: 'Fort → Kaduwela', active: 3, status: 'Active' },
-    { id: '154', name: 'Dehiwala - Maharagama', fromTo: 'Dehiwala → Maharagama', active: 2, status: 'Active' },
-    { id: '177', name: 'Borella - Kottawa', fromTo: 'Borella → Kottawa', active: 5, status: 'Active' },
-    { id: '102', name: 'Pettah - Battaramulla', fromTo: 'Pettah → Battaramulla', active: 0, status: 'Maintenance' },
-    { id: '400', name: 'Kandy Road - Rajagiriya', fromTo: 'Kandy Rd → Rajagiriya', active: 6, status: 'Active' },
-    { id: '240', name: 'Maradana - Panadura', fromTo: 'Maradana → Panadura', active: 0, status: 'Inactive' },
-    { id: '310', name: 'Fort - Galle Face - Wellawatte', fromTo: 'wellawatte', active: 3, status: 'Active' },
-  ]);
+  // Fetch routes from backend (/trck/api/routes) on initial mount
+  useEffect(() => {
+    const loadRoutes = async () => {
+      try {
+        const backendRoutes = await fetchRoutesApi();
+        if (Array.isArray(backendRoutes) && backendRoutes.length > 0) {
+          const formatted = backendRoutes.map((r) => ({
+            id: r.routeNumber || String(r.id),
+            dbId: r.id,
+            name: r.routeName || r.name,
+            fromTo: getLocationDisplay(r),
+            status: r.status || 'Active',
+          }));
+          setRoutes(formatted);
+        }
+      } catch (err) {
+        console.warn('Using default routes due to API fetch error:', err);
+      }
+    };
+    loadRoutes();
+  }, []);
 
   const handleSaveNewRoute = (newRouteData) => {
     const newEntry = {
-      id: newRouteData.routeNumber, 
-      name: newRouteData.routeName,     
-      fromTo: `${newRouteData.origin} → ${newRouteData.destination}`, 
-      active: 0, 
-      status: newRouteData.status,
+      id: newRouteData.routeNumber || String(newRouteData.id),
+      name: newRouteData.routeName || newRouteData.name,
+      fromTo: getLocationDisplay(newRouteData),
+      status: newRouteData.status || 'Active',
     };
-    setRoutes([newEntry, ...routes]); 
-    setShowAddModal(false); 
+    setRoutes([newEntry, ...routes]);
+    setShowAddModal(false);
   };
 
   const openDeleteModal = (id) => {
@@ -36,8 +76,11 @@ const RouteManagement = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
-    setRoutes(routes.filter(route => route.id !== routeToDelete));
+  const confirmDelete = async () => {
+    if (routeToDelete) {
+      deleteRouteApi(routeToDelete).catch(() => {});
+      setRoutes(routes.filter(route => route.id !== routeToDelete));
+    }
     setIsDeleteModalOpen(false);
     setRouteToDelete(null);
   };
@@ -48,12 +91,11 @@ const RouteManagement = () => {
   );
 
   return (
-    <div className="font-sans"> {/* Removed bg and p-8 to prevent "box inside box" */}
+    <div className="font-sans">
       
-      {/* 1. Aligned Header: Subtitle aligns with title (from Layout) and Button is level */}
+      {/* 1. Aligned Header: Subtitle aligns with title and Button is level */}
       <div className="flex justify-between items-center mb-15 -mt-6">
         <div>
-          {/* Main Title is handled by AdminLayout, we just put the subtitle here */}
           <p className="text-slate-500 text-sm font-medium">
             {routes.length} routes configured · {routes.filter(r => r.status === 'Active').length} active
           </p>
@@ -66,7 +108,7 @@ const RouteManagement = () => {
         </button>
       </div>
 
-      {/* 2. Table Container: The actual white box card */}
+      {/* 2. Table Container: White box card */}
       <div className="bg-white rounded-[24px] shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-8 border-b border-slate-50 flex justify-between items-center">
           <div className="relative w-72">
@@ -79,7 +121,6 @@ const RouteManagement = () => {
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-blue-400" 
             />
           </div>
-          {/* Matches the "8 results" text in your design */}
           <span className="text-xs text-slate-400 font-medium">{filteredRoutes.length} results</span>
         </div>
 
@@ -89,26 +130,20 @@ const RouteManagement = () => {
               <th className="px-6 py-4">Route #</th>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">From → To</th>
-              <th className="px-6 py-4 text-center">Active Buses</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {filteredRoutes.map((route) => (
-              <tr key={route.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr key={route.id || route.dbId} className="hover:bg-slate-50/50 transition-colors">
                 <td className="px-6 py-5">
                   <span className="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shadow-sm">
                     {route.id}
                   </span>
                 </td>
                 <td className="px-6 py-5 font-bold text-slate-700 text-sm">{route.name}</td>
-                <td className="px-6 py-5 text-slate-400 text-xs">{route.fromTo}</td>
-                <td className="px-6 py-5 text-center">
-                   <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-green-600">
-                     <Bus size={14} className="opacity-50" /> {route.active}
-                   </div>
-                </td>
+                <td className="px-6 py-5 text-slate-500 font-medium text-xs">{route.fromTo}</td>
                 <td className="px-6 py-5">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-bold inline-flex items-center gap-1.5 ${
                     route.status === 'Active' ? 'bg-green-50 text-green-600' : 

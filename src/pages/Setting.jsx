@@ -5,11 +5,11 @@ import {
 } from 'lucide-react';
 
 // --- Reusable Section Wrapper ---
-const SettingSection = ({ icon: Icon, title, children, iconColor }) => (
+const SettingSection = ({ icon: IconComponent, title, children, iconColor }) => (
   <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden mb-6">
     <div className="px-8 py-5 border-b border-slate-50 flex items-center gap-4 bg-white">
       <div className={`p-2.5 rounded-xl ${iconColor}`}>
-        <Icon size={22} />
+        {IconComponent && <IconComponent size={22} />}
       </div>
       <h2 className="text-lg font-bold text-slate-800">{title}</h2>
     </div>

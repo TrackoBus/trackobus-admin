@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 
 // --- Icons (Kept exactly as your friend's original) ---
@@ -28,7 +28,6 @@ const pageTitleByPath = {
 
 function AdminLayout() {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const isDashboard = pathname === '/dashboard';
   const [lastRefreshedAt, setLastRefreshedAt] = useState(new Date());
 

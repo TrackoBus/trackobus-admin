@@ -26,9 +26,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken();
+      localStorage.setItem('token', token);
       localStorage.setItem('isAuthenticated', 'true');
-      console.log('Signed in successfully');
+      console.log('[TrackoBus Auth] Signed in successfully, Firebase token stored.');
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
